@@ -25,7 +25,7 @@ from dateutil import parser
 from .utils import strip_timestamp
 
 
-def fetch_aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method='Average'):
+def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method='Average'):
 
     """Will return a pandas df of aggregated values (averaged values by default) between start and end time, within the given interval
     Arguments: 
@@ -64,7 +64,7 @@ def fetch_aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', 
                    
     return data
 
-def fetch_recorded_vals(tags, start_time="-30d", end_time=""):
+def recorded_vals(tags, start_time="-30d", end_time=""):
     """Will return a pandas df of recorded vals between start and end time, with an the given interval
     Arguments: 
     tags: list or list like"""
@@ -87,7 +87,7 @@ def fetch_recorded_vals(tags, start_time="-30d", end_time=""):
     
     return data
 
-def fetch_interp_vals(tags, start_time="-30d", end_time="", interval='12h'):
+def interp_vals(tags, start_time="-30d", end_time="", interval='12h'):
     """Will return a pandas df of averaged vals between start and end time, with an the given interval
     Arguments: 
     tags: list or list like"""
@@ -112,11 +112,11 @@ def fetch_interp_vals(tags, start_time="-30d", end_time="", interval='12h'):
     return data
 
 
-def fetch_current_vals(tags):
+def current_vals(tags):
     return [PIPoint.FindPIPoint(piServer, tag).CurrentValue().Value for tag in tags]
     
 
-def batch_fetch_aggregated_vals(tags, start_time, end_time, interval,period,increment,method='Average',verbose=False,save_csv=False,filename="",return_df=True):
+def batch_aggregated_vals(tags, start_time, end_time, interval,period,increment,method='Average',verbose=False,save_csv=False,filename="",return_df=True):
     """ 
     Puprose: fetch large averaged data in batches to ease load on server
     function parameter description:
@@ -124,7 +124,7 @@ def batch_fetch_aggregated_vals(tags, start_time, end_time, interval,period,incr
     start_time  : start date time in string format where batch fetch begin
     end_time    : end data time in string format where batch ends
     interval    : period over which to average data e.g. '4H', '2D'
-    method      : aggregation method that will be given to fetch_aggregated_vals
+    method      : aggregation method that will be given to aggregated_vals
     period      : time period to define batch size e.g. 'days','months'
     increment   : number of time periods in a batch
     verbose     : verbose output of progress (default = False)
@@ -149,7 +149,7 @@ def batch_fetch_aggregated_vals(tags, start_time, end_time, interval,period,incr
     while block_end < end_dt:
         if verbose:
             print('Collecting block %s to %s' % (str(start_dt), str(block_end)))
-        data = fetch_aggregated_vals(tags,str(start_dt),str(block_end),interval,method=method)
+        data = aggregated_vals(tags,str(start_dt),str(block_end),interval,method=method)
         data.index.names = ['DateTime']
         bigdata = bigdata.append(data, sort=True, verify_integrity=True)
 
@@ -171,7 +171,7 @@ def batch_fetch_aggregated_vals(tags, start_time, end_time, interval,period,incr
         suffix=suffix+1
     if verbose:
         print('Collecting block %s to %s' % (str(start_dt), str(end_dt)))     
-    data = fetch_aggregated_vals(tags,str(start_dt),str(end_dt),interval,method=method)
+    data = aggregated_vals(tags,str(start_dt),str(end_dt),interval,method=method)
     data.index.names = ['DateTime']
     bigdata = bigdata.append(data,sort=True, verify_integrity=True)
     if verbose:
@@ -194,7 +194,7 @@ def batch_fetch_aggregated_vals(tags, start_time, end_time, interval,period,incr
     else: 
         return None
 
-def batch_fetch_recorded_vals(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True):
+def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True):
     """ 
     Puprose: fetch large averaged data in batches to ease load on server
     function parameter description:
@@ -227,7 +227,7 @@ def batch_fetch_recorded_vals(tags, start_time, end_time,period,increment,verbos
     while block_end < end_dt:
         if verbose:
             print('Collecting block %s to %s' % (str(start_dt), str(block_end)))
-        data = fetch_recorded_vals(tags,str(start_dt),str(block_end))
+        data = recorded_vals(tags,str(start_dt),str(block_end))
         data.index.names = ['DateTime']
         bigdata = bigdata.append(data, sort=True, verify_integrity=True)
 
@@ -249,7 +249,7 @@ def batch_fetch_recorded_vals(tags, start_time, end_time,period,increment,verbos
         suffix=suffix+1
     if verbose:
         print('Collecting block %s to %s' % (str(start_dt), str(end_dt)))     
-    data = fetch_recorded_vals(tags,str(start_dt),str(end_dt))
+    data = recorded_vals(tags,str(start_dt),str(end_dt))
     data.index.names = ['DateTime']
     bigdata = bigdata.append(data,sort=True, verify_integrity=True)
     if verbose:

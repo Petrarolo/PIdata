@@ -4,12 +4,23 @@ import clr
 sys.path.append(r'C:\Program Files (x86)\PIPC\AF\PublicAssemblies\4.0')
 clr.AddReference('OSIsoft.AFSDK')
 
+from OSIsoft.AF import *
+from OSIsoft.AF.PI import *
+from OSIsoft.AF.Asset import *
+from OSIsoft.AF.Data import *
+from OSIsoft.AF.Time import *
+from OSIsoft.AF.UnitsOfMeasure import *
+
 piServers = PIServers()
 piServer = piServers.DefaultPIServer;
 
-from OSIsoft.AF.Time import AFLocaleIndependentFormatProvider
-
 import datetime
+import time
+import pandas as pd
+import numpy as np
+
+from dateutil.relativedelta import relativedelta, MO
+from dateutil import parser
 
 
 def strip_timestamp(timestamp):
