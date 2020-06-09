@@ -271,3 +271,96 @@ def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=Fals
         
     else: 
         return None
+
+
+def recorded_vals_dict(tags, start_time="-30d", end_time=""):
+    """A dictionary version of the recorded vals function for better efficiency for large amounts of data
+    Will return a dictionary of recorded vals between start and end time, with an the given interval
+    Arguments: 
+    tags: list or list like"""
+
+    time_range = AFTimeRange(start_time, end_time)
+
+    data = {tag : {} for tag in tags}
+
+    for tag in tags: 
+        pt = PIPoint.FindPIPoint(piServer, tag)
+        name = pt.Name.lower()
+
+        recorded = pt.RecordedValues(time_range, AFBoundaryType.Inside, "", False)
+
+        for event in recorded:
+            data[tag][event.Timestamp.ToString(AFLocaleIndependentFormatProvider())] = str(event.Value)
+
+    return data
+
+
+def batch_recorded_vals_dict(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True):
+    """ 
+    A dictionary version of the batch recorded vals function for better efficiency for large amounts of data
+
+    Puprose: fetch large averaged data in batches
+    function parameter description:
+    tags        : list of tags to download
+    start_time  : start date time in string format where batch fetch begin
+    end_time    : end data time in string format where batch ends
+    
+    
+    period      : time period to define batch size e.g. 'days','months'
+    increment   : number of time periods in a batch
+    verbose     : verbose output of progress (default = False)
+    save_csv    : save progress files. Default is False.
+    filename    : name of file without the extension.  Function will add suffix
+    return_df   : whether or not to return the data as a pandas dataframe (default=True)
+    """
+     
+    bigdata = {tag : {} for tag in tags}
+    start_dt = parser.parse(start_time)    #the start time
+    end_dt = parser.parse(end_time)    # the end of the time
+    suffix=1
+    if verbose:
+        print('Collecting data from %s to %s in batches of  %s %s:' % (start_time, end_time,increment,period))
+    kwargs={period:increment}
+    block_end = start_dt+relativedelta(**kwargs)
+    while block_end < end_dt:
+        if verbose:
+            print('Collecting block %s to %s' % (str(start_dt), str(block_end)))
+        data = recorded_vals_dict(tags,str(start_dt),str(block_end))
+        
+        for tag in tags:
+            bigdata[tag].update(data[tag])
+
+        if verbose:
+            print('Done')
+            
+                
+        start_dt=block_end
+        block_end =start_dt+relativedelta(**kwargs)
+        suffix=suffix+1
+    if verbose:
+        print('Collecting block %s to %s' % (str(start_dt), str(end_dt)))     
+    data = recorded_vals_dict(tags,str(start_dt),str(end_dt))
+
+    bigdata[tag].update(data[tag])
+    if verbose:
+        print('Batch fetch completed.')
+    
+    if save_csv:
+        filename_suffix = filename+'.json'
+        j = json.dumps(bigdata)
+        with open(filename_suffix, 'w') as f:
+            f.write(j)
+            f.close()
+
+        if verbose:
+            print('Data saved to %s' % (filename_suffix))
+            
+    if return_df:
+
+#         if save_csv:
+#             return pd.read_csv(filename_suffix, index_col=0)
+#         else: 
+        return bigdata
+        
+    else: 
+        return None
