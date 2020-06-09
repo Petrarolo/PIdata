@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'PIdata',         # How you named your package folder (MyLib)
   packages = ['pidata'],   # Chose the same as "name"
-  version = '0.2',      # Start with a small number and increase it with every change you make
+  version = '0.2.1',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'An easy-to-use connector for the OSI PI historian',   # Give a short description about your library
   author = 'Venanzio Petrarolo',                   # Type in your name
@@ -13,7 +13,6 @@ setup(
   install_requires=[            # I get to this in a second
           'pythonnet',
           'numpy',
-          'dateutil',
           'pandas',
       ],
   classifiers=[
