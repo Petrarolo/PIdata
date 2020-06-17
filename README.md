@@ -1,11 +1,11 @@
 # PIdata
 An easy to use python package for extracting data from an OSI PI historian/server via the OSI PI SDK. Based on this blog post: https://pisquare.osisoft.com/people/rborges/blog/2016/08/01/pi-and-python-pithon
 
-## Rules for the package and new features:
+## What makes PIdata great:
 1. Written in python/ironpython
 2. Simple to use (specifically for people new to python)
 3. Customisable (exposing the PI SDK as python functions/objects)
-4. Integrate well with existing python handling tools (e.g. pandas dfs)
+4. Integrates well with existing python handling tools (e.g. pandas dfs)
 5. Does not reinvent existing tools as these are what makes python great
 
 ## Prerequisites: 
@@ -28,7 +28,7 @@ onamission21/AF-SDK-for-Python
 alyasaud/PITHON
 
 ## Contributing
-I shared this package because it makes my life easier and hoped others would also find it useful. If you do, please star the repo on github and share with your colleagues. 
+I find this code very useful. If you do too, please star the repo on github and share with your colleagues. 
 Many thanks to the people that have contributed their code thus far. Please feel free to submit a pull request, report a bug or request a feature.
 
 ## Functions: 
@@ -48,8 +48,8 @@ Will return a pandas df of aggregated values (averaged values by default) betwee
                     Range - The range of values over the time range (Maximum-Minimum)
                     StdDev - The standard deviation over the time range.
                     PopulationStdDev - The population standard deviation over the time range.
-                    Count - The sum of event count over the time range when calculation basis is event weighted. The sum of event time duration over the time range when calculation basis is time weighted.
-                    PercentGood - Percent of data with good value during the calculation period. For time weighted calculations, the percentage is based on time.
+                    Count - The sum of event count/event time duration over the time range when calculation basis is event/time weighted respectively.
+                    PercentGood - Percent of data with good value during the calculation period.
                     TotalWithUOM, All, AllForNonNumeric (TODO)
                     Please see: https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_Data_AFSummaryTypes.htm
 
@@ -112,11 +112,10 @@ Internal function. Converts PI timestamp format to python datetime format.
 Will check each PI Tag in list tag and return list of tags found or NOT found (depending on parameter return_found)
     
     tags: list of PI query filters
-    returns: list of all tag names that match the PI queries if return_found=True 
-             OR list of the given PI queries that did not match any tags if return_found=False
+    returns: list of all tag names that match the PI queries if return_found=True (default) OR list of the given PI queries that did not match any tags if return_found=False
 
 
-## How do I change the PI Server:
+## How do I change to a different (non default) PI Server:
 TODO
 
 ## Exposing the SDK:
