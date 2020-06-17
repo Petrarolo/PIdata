@@ -21,9 +21,10 @@ To pull hourly averages for the '24T1345.PV' tag:
     df = pidata.pull.aggregated_vals(['24T1345.PV'], start_time='1/1/2020', end_time='2/2/2020', interval='1h')
 
 ## Similar projects:
-A python library for OSIsoft's PI Web API
 FernandoRodriguezP/OSIsoftPy
+
 onamission21/AF-SDK-for-Python
+
 alyasaud/PITHON
 
 ## Contributing
