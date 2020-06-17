@@ -12,11 +12,13 @@ An easy to use python package for extracting data from an OSI PI historian/serve
 OSI PI installed on your machine, connected the historian (probably already the case if you were looking for this package)
 
 ## Installation:
-pip install PIdata
+
+    pip install PIdata
 
 ## Basic usage:
 To pull hourly averages for the '24T1345.PV' tag:
-df = pidata.pull.aggregated_vals(['24T1345.PV'], start_time='1/1/2020', end_time='2/2/2020', interval='1h')
+
+    df = pidata.pull.aggregated_vals(['24T1345.PV'], start_time='1/1/2020', end_time='2/2/2020', interval='1h')
 
 ## Similar projects:
 A python library for OSIsoft's PI Web API
@@ -34,6 +36,7 @@ Many thanks to the people that have contributed their code thus far. Please feel
 
 #### pidata.pull.aggregated_vals
 Will return a pandas df of aggregated values (averaged values by default) between start and end time, within the given interval
+    
     Arguments: 
     tags         :  list or list like
     method       :  Instead of returning the average value over the interval, the returned value can be specified as one of the following: 
@@ -51,11 +54,13 @@ Will return a pandas df of aggregated values (averaged values by default) betwee
 
 #### pidata.pull.recorded_vals
 Will return a pandas df of recorded vals between start and end time, with an the given interval
+    
     Arguments: 
     tags: list or list like
 
 #### pidata.pull.interp_vals
 Will return a pandas df of averaged vals between start and end time, with an the given interval
+    
     Arguments: 
     tags: list or list like
 
@@ -63,6 +68,7 @@ Will return a pandas df of averaged vals between start and end time, with an the
 
 #### pidata.pull.batch_aggregated_vals
 Puprose: fetch large averaged data in batches
+    
     Arguments:
     tags        : list of tags to download
     start_time  : start date time in string format where batch fetch begin
@@ -78,12 +84,11 @@ Puprose: fetch large averaged data in batches
 
 #### pidata.pull.batch_recorded_vals
 Puprose: fetch large averaged data in batches
+    
     Arguments: 
     tags        : list of tags to download
     start_time  : start date time in string format where batch fetch begin
     end_time    : end data time in string format where batch ends
-    
-    
     period      : time period to define batch size e.g. 'days','months'
     increment   : number of time periods in a batch
     verbose     : verbose output of progress (default = False)
