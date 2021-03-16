@@ -12,7 +12,6 @@ from OSIsoft.AF.Time import *
 from OSIsoft.AF.UnitsOfMeasure import *
 
 piServers = PIServers()
-piServer = piServers.DefaultPIServer;
 
 import datetime
 import time
@@ -25,7 +24,7 @@ from dateutil import parser
 from .utils import strip_timestamp
     
 
-def fetch_attributes(tags, attributes=[], get_all=False):
+def fetch_attributes(tags, attributes=[], get_all=False, server='default'):
     """
     Puprose: Returns a dataframe of attributes
     tags       : list
@@ -43,6 +42,14 @@ def fetch_attributes(tags, attributes=[], get_all=False):
         ... for complete list please see https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_PI_PICommonPointAttributes.htm
     *case insensitive
     """
+    
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
     
     data = pd.DataFrame(columns=tags)
 

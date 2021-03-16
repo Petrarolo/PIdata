@@ -28,13 +28,21 @@ def strip_timestamp(timestamp):
     return datetime.datetime.strptime(timestamp.ToString(AFLocaleIndependentFormatProvider()), '%m/%d/%Y %H:%M:%S')
 
 
-def validate_tags(tags,return_found=True):
+def validate_tags(tags,return_found=True, server='default'):
     """Will check each PI Tag in list tag and return list of tags found or NOT found (depending on parameter return_found)
     
     tags: list of PI query filters
     returns: list of all tag names that match the PI queries if return_found=True 
              OR list of the given PI queries that did not match any tags if return_found=False"""
 
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     checklist=[]
     for tag in tags:
 
