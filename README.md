@@ -116,7 +116,7 @@ Will check each PI Tag in list tag and return list of tags found or NOT found (d
 
 
 ## How do I change to a different (non default) PI Server:
-TODO
+For any function that requires access to PI Server, use the `server` argument to pass the PI Server by name (string). If the `server` argument is ommitted, PI Server will be set to the default server.
 
 ## Exposing the SDK:
 TODO

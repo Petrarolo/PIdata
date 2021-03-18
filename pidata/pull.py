@@ -12,7 +12,6 @@ from OSIsoft.AF.Time import *
 from OSIsoft.AF.UnitsOfMeasure import *
 
 piServers = PIServers()
-piServer = piServers.DefaultPIServer;
 
 import datetime
 import time
@@ -26,7 +25,7 @@ from dateutil import parser
 from .utils import strip_timestamp
 
 
-def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method='Average'):
+def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method='Average', server='default'):
 
     """Will return a pandas df of aggregated values (averaged values by default) between start and end time, within the given interval
     Arguments: 
@@ -43,7 +42,15 @@ def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method
                     PercentGood - Percent of data with good value during the calculation period. For time weighted calculations, the percentage is based on time.
                     TotalWithUOM, All, AllForNonNumeric (TODO)
                     Please see: https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_Data_AFSummaryTypes.htm"""
-    
+
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     time_range = AFTimeRange(start_time, end_time)
     span = AFTimeSpan.Parse(interval)
     
@@ -65,11 +72,19 @@ def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method
                    
     return data
 
-def recorded_vals(tags, start_time="-30d", end_time=""):
+def recorded_vals(tags, start_time="-30d", end_time="", server='default'):
     """Will return a pandas df of recorded vals between start and end time, with an the given interval
     Arguments: 
     tags: list or list like"""
     
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     time_range = AFTimeRange(start_time, end_time)
     
     data = pd.DataFrame(columns=tags)
@@ -88,10 +103,18 @@ def recorded_vals(tags, start_time="-30d", end_time=""):
     
     return data
 
-def interp_vals(tags, start_time="-30d", end_time="", interval='12h'):
+def interp_vals(tags, start_time="-30d", end_time="", interval='12h', server='default'):
     """Will return a pandas df of averaged vals between start and end time, with an the given interval
     Arguments: 
     tags: list or list like"""
+    
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
     
     time_range = AFTimeRange(start_time, end_time)
     span = AFTimeSpan.Parse(interval)
@@ -113,11 +136,19 @@ def interp_vals(tags, start_time="-30d", end_time="", interval='12h'):
     return data
 
 
-def current_vals(tags):
+def current_vals(tags, server='default'):
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     return [PIPoint.FindPIPoint(piServer, tag).CurrentValue().Value for tag in tags]
     
 
-def batch_aggregated_vals(tags, start_time, end_time, interval,period,increment,method='Average',verbose=False,save_csv=False,filename="",return_df=True):
+def batch_aggregated_vals(tags, start_time, end_time, interval,period,increment,method='Average',verbose=False,save_csv=False,filename="",return_df=True, server='default'):
     """ 
     Puprose: fetch large averaged data in batches to ease load on server
     function parameter description:
@@ -134,6 +165,14 @@ def batch_aggregated_vals(tags, start_time, end_time, interval,period,increment,
     return_df   : whether or not to return the data as a pandas dataframe (default=True)
     """
     
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     bigdata=pd.DataFrame()
     if save_csv:
         filename_suffix = filename+'.csv'
@@ -195,7 +234,7 @@ def batch_aggregated_vals(tags, start_time, end_time, interval,period,increment,
     else: 
         return None
 
-def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True):
+def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True, server='default'):
     """ 
     Puprose: fetch large averaged data in batches to ease load on server
     function parameter description:
@@ -212,6 +251,14 @@ def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=Fals
     return_df   : whether or not to return the data as a pandas dataframe (default=True)
     """
     
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     bigdata=pd.DataFrame()
     if save_csv:
         filename_suffix = filename+'.csv'
@@ -274,12 +321,20 @@ def batch_recorded_vals(tags, start_time, end_time,period,increment,verbose=Fals
         return None
 
 
-def recorded_vals_dict(tags, start_time="-30d", end_time=""):
+def recorded_vals_dict(tags, start_time="-30d", end_time="", server='default'):
     """A dictionary version of the recorded vals function for better efficiency for large amounts of data
     Will return a dictionary of recorded vals between start and end time, with an the given interval
     Arguments: 
     tags: list or list like"""
 
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     time_range = AFTimeRange(start_time, end_time)
 
     data = {tag : {} for tag in tags}
@@ -296,7 +351,7 @@ def recorded_vals_dict(tags, start_time="-30d", end_time=""):
     return data
 
 
-def batch_recorded_vals_dict(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True):
+def batch_recorded_vals_dict(tags, start_time, end_time,period,increment,verbose=False,save_csv=False,filename="",return_df=True, server='default'):
     """ 
     A dictionary version of the batch recorded vals function for better efficiency for large amounts of data
 
@@ -315,6 +370,14 @@ def batch_recorded_vals_dict(tags, start_time, end_time,period,increment,verbose
     return_df   : whether or not to return the data as a pandas dataframe (default=True)
     """
      
+    if server != 'default':
+        piServer = PIServer.FindPIServer(server)
+    else:
+        piServer = piServers.DefaultPIServer
+        
+    if piServer is None:
+        piServer = piServers.DefaultPIServer
+        
     bigdata = {tag : {} for tag in tags}
     start_dt = parser.parse(start_time)    #the start time
     end_dt = parser.parse(end_time)    # the end of the time
