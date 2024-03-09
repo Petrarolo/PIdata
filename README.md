@@ -18,6 +18,8 @@ OSI PI installed on your machine, connected the historian (probably already the 
 ## Basic usage:
 To pull hourly averages for the '24T1345.PV' tag:
 
+    import pidata
+
     df = pidata.pull.aggregated_vals(['24T1345.PV'], start_time='1/1/2020', end_time='2/2/2020', interval='1h')
 
 ## Similar projects:
@@ -31,43 +33,61 @@ alyasaud/PITHON
 I find this code very useful. If you do too, please star the repo on github and share with your colleagues. 
 Many thanks to the people that have contributed their code thus far. Please feel free to submit a pull request, report a bug or request a feature.
 
-## Functions: 
 
-### Pull functions (pidata.pull)
 
-#### pidata.pull.aggregated_vals
-Will return a pandas df of aggregated values (averaged values by default) between start and end time, within the given interval
+## Functions: Data pull functions (`pidata.pull`)
+
+#### `pidata.pull.aggregated_vals`
+Will return a pandas dataframe of aggregated values (averaged values by default) between `start_time` and `end_time`, within the given interval
     
     Arguments: 
     tags         :  list or list like
-    method       :  Instead of returning the average value over the interval, the returned value can be specified as one of the following: 
-                    Total - A totalization over the time range.
-                    Average - The average value over the time range.
-                    Minimum - The minimum value over the time range.
-                    Maximum - The maximum value over the time range.
-                    Range - The range of values over the time range (Maximum-Minimum)
-                    StdDev - The standard deviation over the time range.
-                    PopulationStdDev - The population standard deviation over the time range.
-                    Count - The sum of event count/event time duration over the time range when calculation basis is event/time weighted respectively.
-                    PercentGood - Percent of data with good value during the calculation period.
-                    TotalWithUOM, All, AllForNonNumeric (TODO)
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    interval     :  Time between data points. Default: '12h'
+    method       :  Instead of returning the average value over the interval, the returned values can be specified as one of the following: 
+                    Total
+                    Average (Default)
+                    Minimum
+                    Maximum
+                    Range
+                    StdDev - Standard deviation.
+                    PopulationStdDev - Population standard deviation.
+                    Count
+                    PercentGood - Percentage of data with good value. 
+                    TotalWithUOM
+                    All
+                    AllForNonNumeric
                     Please see: https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_Data_AFSummaryTypes.htm
+    server       :  Name of the PI server to use. Uses the default if none is provided
 
-#### pidata.pull.recorded_vals
-Will return a pandas df of recorded vals between start and end time, with an the given interval
+#### `pidata.pull.recorded_vals`
+Will return a pandas dataframe of recorded vals between `start_time` and `end_time`, with an the given interval
     
     Arguments: 
-    tags: list or list like
+    tags         :  list or list like
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    server       :  Name of the PI server to use. Uses the default if none is provided
 
-#### pidata.pull.interp_vals
-Will return a pandas df of averaged vals between start and end time, with an the given interval
+#### `pidata.pull.interp_vals`
+Will return a pandas dataframe of averaged vals between `start_time` and `end_time`, with an the given interval
     
+    Arguments:  
+    tags         :  list or list like
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    interval     :  Time between data points. Default: '12h'
+    server       :  Name of the PI server to use. Uses the default if none is provided
+
+#### `pidata.pull.current_vals`
+Returns the last recorded values at the time of running the function
+
     Arguments: 
-    tags: list or list like
+    tags         :  list or list like
+    server       :  Name of the PI server to use. Uses the default if none is provided
 
-#### pidata.pull.current_vals
-
-#### pidata.pull.batch_aggregated_vals
+#### `pidata.pull.batch_aggregated_vals`
 Puprose: fetch large averaged data in batches
     
     Arguments:
@@ -82,8 +102,9 @@ Puprose: fetch large averaged data in batches
     save_csv    : save progress files. Default is False.
     filename    : name of file without the extension.  Function will add suffix
     return_df   : whether or not to return the data as a pandas dataframe (default=True)
+    server      :  Name of the PI server to use. Uses the default if none is provided
 
-#### pidata.pull.batch_recorded_vals
+#### `pidata.pull.batch_recorded_vals`
 Puprose: fetch large averaged data in batches
     
     Arguments: 
@@ -96,27 +117,42 @@ Puprose: fetch large averaged data in batches
     save_csv    : save progress files. Default is False.
     filename    : name of file without the extension.  Function will add suffix
     return_df   : whether or not to return the data as a pandas dataframe (default=True)
+    server      :  Name of the PI server to use. Uses the default if none is provided
     
-#### pidata.pull.recorded_vals_dict
+#### `pidata.pull.recorded_vals_dict`
 A dictionary version of the recorded vals function for better efficiency for large amounts of data.
 
-#### pidata.pull.batch_recorded_vals_dict
-Same as batch_recorded_vals but returns a dictionary. 
+#### `pidata.pull.batch_recorded_vals_dict`
+Same as `batch_recorded_vals` but returns a dictionary. 
 
-### Utility functions (pidata.utils)
+## Functions: Utility functions (`pidata.utils`)
 
-#### pidata.utils.strip_timestamp
+#### `pidata.utils.strip_timestamp`
 Internal function. Converts PI timestamp format to python datetime format. 
 
-#### pidata.utils.validate_tags
-Will check each PI Tag in list tag and return list of tags found or NOT found (depending on parameter return_found)
+#### `pidata.utils.validate_tags`
+Will check each PI Tag in list tag and return list of tags found or NOT found (depending on parameter `return_found`)
     
     tags: list of PI query filters
     returns: list of all tag names that match the PI queries if return_found=True (default) OR list of the given PI queries that did not match any tags if return_found=False
 
+For example, you can wrap your tag list in the `validate_tags` function to ensure you don't get a "tag not found" error in one of the other functions. 
+
+    from pidata.pull import aggregated_vals
+    from pidata.utils import validate_tags
+
+    aggregated_vals(validate_tags(['tag1', 'tag2', 'tag3',]), start_time='1/1/2020') 
+
 
 ## How do I change to a different (non default) PI Server:
-For any function that requires access to PI Server, use the `server` argument to pass the PI Server by name (string). If the `server` argument is ommitted, PI Server will be set to the default server.
+For any function that requires access to PI Server, use the `server` argument to pass the PI Server by name (string). If the `server` argument is ommitted, PI Server will be set to the default server. This is the recommended method of changing servers. 
+
+    df = pidata.pull.aggregated_vals(['24T1345.PV'], start_time='1/1/2020', server='PI.SERVER.NAME')
+
+Alternatively, you can change the default server name by importing `piServers` from `pidata.pull`. This might not change the default server for functions in `pidata.utils`.
+
+    from pidata.pull import piServers
+    piServers.DefaultPIServer = 'PI.SERVER.NAME'
 
 ## Exposing the SDK:
 TODO

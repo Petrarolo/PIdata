@@ -27,21 +27,29 @@ from .utils import strip_timestamp
 
 def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method='Average', server='default'):
 
-    """Will return a pandas df of aggregated values (averaged values by default) between start and end time, within the given interval
+    """Will return a pandas dataframe of aggregated values (averaged values by default) between `start_time` and `end_time`, within the given interval
+    
     Arguments: 
     tags         :  list or list like
-    method       :  Instead of returning the average value over the interval, the returned value can be specified as one of the following: 
-                    Total - A totalization over the time range.
-                    Average - The average value over the time range.
-                    Minimum - The minimum value over the time range.
-                    Maximum - The maximum value over the time range.
-                    Range - The range of values over the time range (Maximum-Minimum)
-                    StdDev - The standard deviation over the time range.
-                    PopulationStdDev - The population standard deviation over the time range.
-                    Count - The sum of event count over the time range when calculation basis is event weighted. The sum of event time duration over the time range when calculation basis is time weighted.
-                    PercentGood - Percent of data with good value during the calculation period. For time weighted calculations, the percentage is based on time.
-                    TotalWithUOM, All, AllForNonNumeric (TODO)
-                    Please see: https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_Data_AFSummaryTypes.htm"""
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    interval     :  Time between data points. Default: '12h'
+    method       :  Instead of returning the average value over the interval, the returned values can be specified as one of the following: 
+                    Total
+                    Average (Default)
+                    Minimum
+                    Maximum
+                    Range
+                    StdDev - Standard deviation.
+                    PopulationStdDev - Population standard deviation.
+                    Count
+                    PercentGood - Percentage of data with good value. 
+                    TotalWithUOM
+                    All
+                    AllForNonNumeric
+                    Please see: https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/T_OSIsoft_AF_Data_AFSummaryTypes.htm
+    server       :  Name of the PI server to use. Uses the default if none is provided"""
+                 
 
     if server != 'default':
         piServer = PIServer.FindPIServer(server)
@@ -74,8 +82,12 @@ def aggregated_vals(tags, start_time="-30d", end_time="", interval='12h', method
 
 def recorded_vals(tags, start_time="-30d", end_time="", server='default'):
     """Will return a pandas df of recorded vals between start and end time, with an the given interval
+    
     Arguments: 
-    tags: list or list like"""
+    tags         :  list or list like
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    server       :  Name of the PI server to use. Uses the default if none is provided"""
     
     if server != 'default':
         piServer = PIServer.FindPIServer(server)
@@ -105,8 +117,13 @@ def recorded_vals(tags, start_time="-30d", end_time="", server='default'):
 
 def interp_vals(tags, start_time="-30d", end_time="", interval='12h', server='default'):
     """Will return a pandas df of averaged vals between start and end time, with an the given interval
-    Arguments: 
-    tags: list or list like"""
+    
+    Arguments:  
+    tags         :  list or list like
+    start_time   :  Time of the first data point. Default: '-30d' (thirty days ago)
+    end_time     :  Time of the last data point. Default: '' (empty/current time)
+    interval     :  Time between data points. Default: '12h'
+    server       :  Name of the PI server to use. Uses the default if none is provided"""
     
     if server != 'default':
         piServer = PIServer.FindPIServer(server)
@@ -137,6 +154,12 @@ def interp_vals(tags, start_time="-30d", end_time="", interval='12h', server='de
 
 
 def current_vals(tags, server='default'):
+    """Returns the last recorded values at the time of running the function
+
+    Arguments: 
+    tags         :  list or list like
+    server       :  Name of the PI server to use. Uses the default if none is provided"""
+    
     if server != 'default':
         piServer = PIServer.FindPIServer(server)
     else:
