@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+src/PIdata.egg-info/PKG-INFO
+src/PIdata.egg-info/SOURCES.txt
+src/PIdata.egg-info/dependency_links.txt
+src/PIdata.egg-info/requires.txt
+src/PIdata.egg-info/top_level.txt
+src/pidata/__init__.py
+src/pidata/meta.py
+src/pidata/pull.py
+src/pidata/utils.py
